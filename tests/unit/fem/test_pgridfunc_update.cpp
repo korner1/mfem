@@ -77,10 +77,10 @@ TEST_CASE("ParGridFunction Update with a cached true vector",
       ParGridFunction y(&fes);
       y.ProjectCoefficient(f);
       y -= x;
-      real_t err = y.Normlinf();
-      MPI_Allreduce(MPI_IN_PLACE, &err, 1, MPITypeMap<real_t>::mpi_type,
+      real_t diff = y.Normlinf();
+      MPI_Allreduce(MPI_IN_PLACE, &diff, 1, MPITypeMap<real_t>::mpi_type,
                     MPI_MAX, MPI_COMM_WORLD);
-      CHECK(err < 1e-12);
+      CHECK(diff < 1e-12);
       if (fes.GetTrueVSize() > 0)
       {
          // The cache kept on rank 0 is that of the new space.
