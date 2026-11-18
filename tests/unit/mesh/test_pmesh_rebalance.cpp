@@ -2099,7 +2099,7 @@ TEST_CASE("ParMesh Rebalance conforming: isolated vertices kept",
          Array<int> init(serial.GetNE());
          init = 0;
          ParMesh pmesh(comm, serial, init.GetData());
-         const real_t x[3] = {2.0 + rank, 3.0, 4.0};
+         const real_t x[3] = {real_t(2 + rank), 3.0, 4.0};
          const int iv = pmesh.AddVertex(x);
          pmesh.SetCurvature(2);
          GridFunction &nodes = *pmesh.GetNodes();
