@@ -53,7 +53,7 @@ void Triangle::SetVertices(const int *ind)
 }
 
 // static method
-void Triangle::MarkEdge(int indices[3], const DSTable &v_to_v,
+void Triangle::MarkEdge(int *indices, const DSTable &v_to_v,
                         const Array<real_t> &length,
                         const Array<std::array<real_t, 6>> &keys)
 {
