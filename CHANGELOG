@@ -62,6 +62,10 @@ Meshing improvements
   delete the face neighbor data and rebuild the nodal space on the renumbered
   shared entities.
 
+- Fixed uniform refinement of simplex meshes after a local refinement of any
+  mesh: the static point matrices were overwritten, and grid functions and
+  curved nodes were interpolated wrongly by every later uniform refinement.
+
 Linear and nonlinear solvers
 ----------------------------
 - Fixed HypreParaSails::SetOperator, which read the communicator of the
