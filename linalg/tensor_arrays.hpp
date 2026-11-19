@@ -27,6 +27,7 @@ namespace mfem::future
 {
 
 template <std::size_t... Is, typename Fn>
+MFEM_FORCE_INLINE
 constexpr inline void for_unrolled_simple(std::index_sequence<Is...>, Fn &&fn)
 {
    (fn(Is), ...);
@@ -57,6 +58,7 @@ constexpr inline auto to_multiindex(std::size_t i)
 /// - output: void
 /// Note: 0D loop executes the lambda one time with an array of dim 0.
 template <int... loop_sizes, typename lambda_t>
+MFEM_FORCE_INLINE
 constexpr inline void for_multiindex(lambda_t f)
 {
    constexpr auto dims = sizeof...(loop_sizes);
@@ -144,6 +146,8 @@ public:
    /// Number of dynamic array dimensions.
    static constexpr std::size_t rank() { return ndims; }
 
+   MFEM_HOST_DEVICE scalar_t *GetData() const { return data; }
+
    /// Array size in the @a k-th dynamic dimension.
    MFEM_HOST_DEVICE std::size_t size(int k = 0) const { return dyn_sizes[k]; }
 
@@ -205,7 +209,7 @@ public:
    /** @brief Comute the dynamic offset for a given dynamic multi-index @a is.
        The total offset in the global data array is the sum of the dynamic and
        static (tensor) offsets. */
-   MFEM_HOST_DEVICE
+   MFEM_HOST_DEVICE MFEM_FORCE_INLINE
    std::size_t get_dynamic_offset(
       const std::array<std::size_t,rank()> &is) const
    {
@@ -221,7 +225,7 @@ public:
    /** @brief Comute the static (tensor) offset for a given tensor multi-index
        @a js. The total offset in the global data array is the sum of the
        dynamic and static (tensor) offsets. */
-   MFEM_HOST_DEVICE
+   MFEM_HOST_DEVICE MFEM_FORCE_INLINE
    std::size_t get_static_offset(
       const std::array<std::size_t,tensor_rank()> &js) const
    {
@@ -241,7 +245,7 @@ public:
        corresponding to the given dynamic multi-index @a is. */
    /** @note Return a const tensor to prevent attempts to assign to the
        temporary object which is considered a mistake. */
-   MFEM_HOST_DEVICE
+   MFEM_HOST_DEVICE MFEM_FORCE_INLINE
    const tensor_type get_tensor(std::array<std::size_t,rank()> is) const
    {
       tensor_type result;
@@ -267,7 +271,7 @@ public:
        corresponding to the given dynamic indices @a is. */
    /** @note Return a const tensor to prevent attempts to assign to the
        temporary object which is considered a mistake. */
-   template <typename... index_types> MFEM_HOST_DEVICE
+   template <typename... index_types> MFEM_HOST_DEVICE MFEM_FORCE_INLINE
    const tensor_type get_tensor(index_types... is) const
    {
       static_assert(sizeof...(is) == rank(), "invalid number of indices!");
@@ -278,7 +282,7 @@ public:
        - get_tensor(std::array<std::size_t,rank()>) iff scalar_t is const,
        - get_accessor(std::array<std::size_t,rank()>) iff scalar_t is not
          const. */
-   MFEM_HOST_DEVICE
+   MFEM_HOST_DEVICE MFEM_FORCE_INLINE
    decltype(auto) operator()(std::array<std::size_t,rank()> is) const
    {
       if constexpr (std::is_const_v<scalar_t>) { return get_tensor(is); }
@@ -288,7 +292,7 @@ public:
    /** @brief Returns one of the following depending on the type scalar_t:
        - get_tensor(index_types...) iff scalar_t is const,
        - get_accessor(index_types...) iff scalar_t is not const. */
-   template <typename... index_types> MFEM_HOST_DEVICE
+   template <typename... index_types> MFEM_HOST_DEVICE MFEM_FORCE_INLINE
    decltype(auto) operator()(index_types... is) const
    {
       if constexpr (std::is_const_v<scalar_t>) { return get_tensor(is...); }

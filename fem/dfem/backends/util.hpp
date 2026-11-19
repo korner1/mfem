@@ -361,7 +361,8 @@ inline void create_fieldbases(
 
       constexpr QuadratureInterpolator::EvalFlags dummy_mode =
          QuadratureInterpolator::VALUES;
-      if constexpr (is_identity_fop<fop_t>::value)
+      if constexpr (is_identity_fop<fop_t>::value ||
+                    is_functionalvalue_fop<fop_t>::value)
       {
          bases[i] = GetFieldBasis<entity_t>(fd, ir, dummy_mode, entities);
       }

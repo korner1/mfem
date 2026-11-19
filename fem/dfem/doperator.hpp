@@ -28,6 +28,7 @@
 #include "backends/global_qf/prelude.hpp"
 #include "backends/local_qf/prelude.hpp" // IWYU pragma: keep
 #include "backends/local_qf/revdiff_transformer.hpp"
+#include "backends/global_qf/revdiff_transformer.hpp"
 
 namespace mfem::future
 {
@@ -2111,7 +2112,11 @@ void DifferentiableOperator::AddIntegrator(
          //mfem::out << get_type_name<output_t>() << "\n";
          //mfem::out << get_type_name<input_t>() << "\n";
 
-         auto dqfunc = make_revdiff<derivative_activity_t>(qfunc);
+         const int num_points = ctx.ir.GetNPoints() * ctx.marked_entities.Size();
+         const auto input_sizes = get_input_size_on_qp(
+                                     inputs, std::make_index_sequence<num_inputs>{});
+         auto dqfunc = make_global_revdiff<derivative_activity_t>(qfunc, num_points,
+                                                                input_sizes);
 
          // The second derivative differentiates dqfunc again. With Enzyme that
          // is another reverse-mode call and this type is the same as dqfunc's;
@@ -2119,7 +2124,8 @@ void DifferentiableOperator::AddIntegrator(
          // so the inner seeding does not overwrite the direction carried by the
          // outer dual pair.
          auto second_dqfunc =
-            make_revdiff<derivative_activity_t, RevDiffDualMode::Derivative>(qfunc);
+            make_global_revdiff<derivative_activity_t, RevDiffDualMode::Derivative>(
+               qfunc, num_points, input_sizes);
 
          const auto derivative_all_fds =
             make_union_fds(infds, derivative_outputs_fds);

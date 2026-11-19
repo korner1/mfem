@@ -243,6 +243,8 @@ set(HDRS
   dfem/backends/global_qf/derivative_apply_transpose.hpp
   dfem/backends/global_qf/derivative_setup.hpp
   dfem/backends/global_qf/prelude.hpp
+  dfem/backends/global_qf/native_revdiff_transformer.hpp
+  dfem/backends/global_qf/revdiff_transformer.hpp
   dfem/backends/local_qf/action.hpp
   dfem/backends/local_qf/derivative_action.hpp
   dfem/backends/local_qf/derivative_apply.hpp
